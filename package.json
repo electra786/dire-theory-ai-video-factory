@@ -1,0 +1,14 @@
+{
+  "name": "dire-theory-ai-video-factory",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "render": "remotion render src/index.jsx Main public/video.mp4"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.544",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "remotion": "4.0.544"
+  }
+}
