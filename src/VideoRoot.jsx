@@ -3,65 +3,60 @@ import {Composition, useCurrentFrame, interpolate} from 'remotion';
 
 const Stickman = () => {
   const frame = useCurrentFrame();
+  const phase = frame * 0.18;
 
-  const walk = Math.sin(frame * 0.18);
-  const bob = Math.abs(Math.sin(frame * 0.18)) * 12;
-  const sway = Math.sin(frame * 0.09) * 8;
+  const x = interpolate(frame, [0, 299], [150, 570], {
+    extrapolateRight: 'clamp',
+  });
 
-  const armLeft = walk * 45;
-  const armRight = -walk * 45;
-  const legLeft = -walk * 55;
-  const legRight = walk * 55;
-
-  const x = 360 + sway;
-  const y = 620 - bob;
+  const bob = Math.abs(Math.sin(phase)) * 9;
+  const leftLeg = Math.sin(phase) * 28;
+  const rightLeg = Math.sin(phase + Math.PI) * 28;
+  const leftKnee = Math.max(0, Math.cos(phase)) * 35;
+  const rightKnee = Math.max(0, Math.cos(phase + Math.PI)) * 35;
 
   return (
     <g
+      transform={`translate(${x}, ${620 - bob})`}
       stroke="white"
-      strokeWidth="13"
+      strokeWidth="12"
       strokeLinecap="round"
       fill="none"
     >
-      {/* Head */}
-      <circle cx={x} cy={y - 190} r="48" />
+      <circle cx="0" cy="-200" r="42" />
+      <line x1="0" y1="-158" x2="0" y2="20" />
 
-      {/* Body */}
-      <line x1={x} y1={y - 140} x2={x} y2={y + 35} />
+      <g transform={`rotate(${Math.sin(phase + Math.PI) * 38} 0 -125)`}>
+        <line x1="0" y1="-125" x2="0" y2="-45" />
+        <line x1="0" y1="-45" x2="-15" y2="-5" />
+      </g>
 
-      {/* Left arm */}
-      <line
-        x1={x} y1={y - 105}
-        x2={x - 75 + armLeft} y2={y - 20}
-      />
+      <g transform={`rotate(${Math.sin(phase) * 38} 0 -125)`}>
+        <line x1="0" y1="-125" x2="0" y2="-45" />
+        <line x1="0" y1="-45" x2="15" y2="-5" />
+      </g>
 
-      {/* Right arm */}
-      <line
-        x1={x} y1={y - 105}
-        x2={x + 75 + armRight} y2={y - 20}
-      />
+      <g transform={`rotate(${leftLeg} 0 20)`}>
+        <line x1="0" y1="20" x2="0" y2="100" />
+        <g transform={`rotate(${leftKnee} 0 100)`}>
+          <line x1="0" y1="100" x2="0" y2="175" />
+          <line x1="0" y1="175" x2="30" y2="175" />
+        </g>
+      </g>
 
-      {/* Left leg */}
-      <line
-        x1={x} y1={y + 35}
-        x2={x - 55 + legLeft} y2={y + 160}
-      />
-
-      {/* Right leg */}
-      <line
-        x1={x} y1={y + 35}
-        x2={x + 55 + legRight} y2={y + 160}
-      />
+      <g transform={`rotate(${rightLeg} 0 20)`}>
+        <line x1="0" y1="20" x2="0" y2="100" />
+        <g transform={`rotate(${rightKnee} 0 100)`}>
+          <line x1="0" y1="100" x2="0" y2="175" />
+          <line x1="0" y1="175" x2="30" y2="175" />
+        </g>
+      </g>
     </g>
   );
 };
 
 const Main = () => {
   const frame = useCurrentFrame();
-
-  const opacity = interpolate(frame, [0, 30], [0, 1], {
-    extrapolateRight: 'clamp',
-  });
 
   return (
     <div style={{
@@ -70,7 +65,6 @@ const Main = () => {
       color: 'white',
       fontFamily: 'Arial',
       display: 'flex',
-      flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center',
     }}>
@@ -80,7 +74,6 @@ const Main = () => {
         fontSize: 48,
         fontWeight: 'bold',
         letterSpacing: 5,
-        opacity,
       }}>
         THE HUMAN MIND
       </div>
@@ -95,7 +88,6 @@ const Main = () => {
         fontSize: 38,
         color: '#00E5FF',
         fontWeight: 'bold',
-        opacity,
       }}>
         KEEP MOVING FORWARD
       </div>
